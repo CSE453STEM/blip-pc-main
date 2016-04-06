@@ -1,0 +1,30 @@
+package UI;
+
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.SwingUtilities;
+import javax.swing.JButton;
+import javax.swing.JTextArea;
+import javax.swing.JPanel;
+import java.awt.Dimension;
+
+public class ui extends JFrame{
+	public static void main(String args[]) {
+		new ui();
+	}
+	ui() {
+		JPanel panel = new JPanel();
+		JLabel jlbHelloWorld = new JLabel("Hello World");
+		add(jlbHelloWorld);
+		this.setSize(100, 100);
+		JTextArea typebox = new JTextArea("type here");
+		typebox.setPreferredSize(new Dimension(400,40));
+		JButton b0 = new JButton("bit 0");
+		panel.add(typebox);
+		panel.add(b0);
+		add(panel);
+		pack();
+		setVisible(true);
+	}
+}
+
