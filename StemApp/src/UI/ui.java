@@ -7,6 +7,9 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+
+import transmit.transmitter;
+
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -19,7 +22,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class ui extends JFrame{
-	
 	private JTextPane chatbox = new JTextPane();
 	private JTextField typebox = new JTextField();
 	private SimpleAttributeSet you = new SimpleAttributeSet();
@@ -62,7 +64,7 @@ public class ui extends JFrame{
 		pack();
 		setVisible(true);
 		
-		MultiListener send = new MultiListener();
+		MultiListener send = new MultiListener(new transmitter(this));
 		typebox.addActionListener(send);
 		sendTypebox.addActionListener(send);
 		
@@ -70,10 +72,15 @@ public class ui extends JFrame{
 		sendTypebox.setBackground(myGreen);
 		sendTypebox.setOpaque(true);
 		
-		printRecieved("what's up");
+		printReceived("what's up");
 	}
 	
 	private class MultiListener implements ActionListener {
+		private transmitter tm;
+		MultiListener(transmitter passed){
+			tm = passed;
+		}
+		
 		public void actionPerformed(ActionEvent e) {
 			Object src = e.getSource();
 			
@@ -81,6 +88,7 @@ public class ui extends JFrame{
 				StyledDocument doc = chatbox.getStyledDocument();
 				try {
 					doc.insertString(doc.getLength(), "You: " + typebox.getText() + "\n", you);
+					tm.sendData(typebox.getText());
 					typebox.setText("");
 				} catch (BadLocationException e1) {
 					// TODO Auto-generated catch block
@@ -90,7 +98,7 @@ public class ui extends JFrame{
 		}
 	}
 	
-	public void printRecieved(String r) {
+	public void printReceived(String r) {
 		StyledDocument doc = chatbox.getStyledDocument();
 		try {
 			doc.insertString(doc.getLength(), "Them: " + r + "\n", them);
