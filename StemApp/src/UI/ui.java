@@ -20,6 +20,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 
 public class ui extends JFrame{
 	private JTextPane chatbox = new JTextPane();
@@ -28,9 +29,20 @@ public class ui extends JFrame{
 	private SimpleAttributeSet them = new SimpleAttributeSet();
 	private JButton sendTypebox = new JButton("Send");
 	private JScrollPane scroll = new JScrollPane(chatbox);
+	private static transmitter tm;
 	
 	public static void main(String args[]) {
-		new ui();		
+		ui myUI = new ui();
+		
+		/* Close COM port when window is closed */
+		myUI.addWindowListener(new java.awt.event.WindowAdapter() {
+		    @Override
+		    public void windowClosing(WindowEvent e){
+				tm.closePort();
+				System.out.println("Properly closed");
+				System.exit(0);
+			}
+		});
 	}
 	
 	ui() {
@@ -64,7 +76,9 @@ public class ui extends JFrame{
 		pack();
 		setVisible(true);
 		
-		MultiListener send = new MultiListener(new transmitter(this));
+		/* Pass UI to data transmission handler */
+		tm = new transmitter(this);
+		MultiListener send = new MultiListener(tm);
 		typebox.addActionListener(send);
 		sendTypebox.addActionListener(send);
 		
