@@ -3,10 +3,12 @@ package UI;
 import javax.swing.JFrame;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
+import javax.swing.text.PlainDocument;
 
 import transmit.transmitter;
 
@@ -38,7 +40,7 @@ public class ui extends JFrame{
 		myUI.addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
 		    public void windowClosing(WindowEvent e){
-				tm.closePort();
+				//tm.closePort();
 				System.out.println("Properly closed");
 				System.exit(0);
 			}
@@ -68,6 +70,7 @@ public class ui extends JFrame{
 		typebox.setPreferredSize(new Dimension(width/3 - width/21, height/30));
 		sendTypebox.setPreferredSize(new Dimension(width/24, height/30));
 		
+		chatbox.setEditable(false);
 		panel.add(scroll);
 		panel2.add(typebox);
 		panel2.add(sendTypebox);
@@ -75,6 +78,10 @@ public class ui extends JFrame{
 		add(panel2, BorderLayout.SOUTH);
 		pack();
 		setVisible(true);
+		
+		typebox.setDocument 
+			(new JTextFieldLim(127));
+		
 		
 		/* Pass UI to data transmission handler */
 		tm = new transmitter(this);
@@ -102,7 +109,7 @@ public class ui extends JFrame{
 				StyledDocument doc = chatbox.getStyledDocument();
 				try {
 					doc.insertString(doc.getLength(), "You: " + typebox.getText() + "\n", you);
-					tm.sendData(typebox.getText());
+					//tm.sendData(typebox.getText());
 					typebox.setText("");
 				} catch (BadLocationException e1) {
 					// TODO Auto-generated catch block
@@ -120,6 +127,23 @@ public class ui extends JFrame{
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}	
+	}
+	
+	private class JTextFieldLim extends PlainDocument {
+		private int lim;
+		
+		JTextFieldLim(int lim) {
+			super();
+			this.lim = lim;
+		}
+		
+		public void insertString( int offset, String str, AttributeSet attr ) throws BadLocationException {
+			if (str == null) return;
+			
+			if ((getLength() + str.length()) <= lim) {
+				super.insertString(offset,  str, attr);
+			}
+		}
 	}
 }
 
