@@ -38,8 +38,8 @@ public class transmitter {
 	public static void closePort(){
 		try {
 			sp.closePort();
-		} catch (SerialPortException e) {
-			System.out.println("Failed to close");
+		} catch (Exception e) {
+			System.out.println(e);
 		}
 	}
 	
@@ -82,7 +82,7 @@ public class transmitter {
 			sp.writeInt(message.length());
 			sp.writeString(message); //should be limited to 126
 			sp.writeString("\n");
-		}catch(SerialPortException e){
+		}catch(Exception e){
 			System.out.println(e);
 		}
 		

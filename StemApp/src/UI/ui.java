@@ -40,7 +40,7 @@ public class ui extends JFrame{
 		myUI.addWindowListener(new java.awt.event.WindowAdapter() {
 		    @Override
 		    public void windowClosing(WindowEvent e){
-				//tm.closePort();
+				tm.closePort();
 				System.out.println("Properly closed");
 				System.exit(0);
 			}
@@ -109,7 +109,7 @@ public class ui extends JFrame{
 				StyledDocument doc = chatbox.getStyledDocument();
 				try {
 					doc.insertString(doc.getLength(), "You: " + typebox.getText() + "\n", you);
-					//tm.sendData(typebox.getText());
+					tm.sendData(typebox.getText());
 					typebox.setText("");
 				} catch (BadLocationException e1) {
 					// TODO Auto-generated catch block
