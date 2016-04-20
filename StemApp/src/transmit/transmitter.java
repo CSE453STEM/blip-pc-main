@@ -52,17 +52,22 @@ public class transmitter {
 	        	int bufsize = event.getEventValue();
 	        	try {
 	        		/* Create buffer large enough for received characters */
+	        		char c = 255;
 	        		byte buffer[] = sp.readBytes(bufsize);
 	        		String str = new String(buffer);
 	        		
 	        		/* Append read string into aggstr */
 	        		aggstr += str;
-	        		String finalchar = str.substring(bufsize-1);
+	        		int index = str.length()-1;
+	        		if (index<0){
+	        			index = 0;
+	        		}
+	        		String finalchar = str.substring(index);
 	        		
 	        		/* If received data is end of package, print all received data */
 	        		if(finalchar.equals("\n")){
 	        			String mstr = aggstr.replaceAll("[\u0000-\u001f]", "");
-	        			myUI.printReceived(mstr);
+	        			myUI.printReceived(mstr.substring(2));
 	        			/* Reset aggregate string */
 	        			aggstr = "";
 	        		}
@@ -77,10 +82,12 @@ public class transmitter {
 	public void sendData(String message){
 		try{
 			char c = 255;
-			sp.writeString(Character.toString(c));
-			sp.writeInt(200);
-			sp.writeInt(message.length());
-			sp.writeString(message); //should be limited to 126
+			int baud = 200;
+			int ln = message.length();
+			sp.writeByte((byte) c);
+			sp.writeByte((byte) baud);
+			sp.writeByte((byte) ln);
+			sp.writeString(message); 
 			sp.writeString("\n");
 		}catch(Exception e){
 			System.out.println(e);
