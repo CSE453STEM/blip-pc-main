@@ -25,7 +25,7 @@ public class transmitter {
 		try{
 			/* Set up COM Port for communication */
 			sp.openPort();
-			sp.setParams(9600,  8,  1,  0);
+			sp.setParams(19200,  8,  1,  0);
 			sp.setEventsMask(SerialPort.MASK_RXCHAR);
 			sp.addEventListener(new portReader());
 		} catch(SerialPortException e){
