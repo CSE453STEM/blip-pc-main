@@ -237,6 +237,10 @@ public class ui extends JFrame{
 	public void printReceived(String r) {
 		StyledDocument doc = chatbox.getStyledDocument();
 		try {
+			if(doc.getLength()==0){
+				doc.insertString(0, "Them: " + r + "\n", them);
+				return;
+			}
 			if(doc.getText(doc.getLength()-1, 1).equals("\n")){
 				doc.insertString(doc.getLength(), "Them: ", them);
 			}
