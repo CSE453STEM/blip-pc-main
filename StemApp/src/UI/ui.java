@@ -165,8 +165,10 @@ public class ui extends JFrame{
 				StyledDocument doc = chatbox.getStyledDocument();
 				try {
 					doc.insertString(doc.getLength(), "You: " + typebox.getText() + "\n", you);
-					tm.sendData(typebox.getText());
+					
+					String message = typebox.getText();
 					typebox.setText("");
+					tm.sendData(message);
 				} catch (BadLocationException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -235,7 +237,10 @@ public class ui extends JFrame{
 	public void printReceived(String r) {
 		StyledDocument doc = chatbox.getStyledDocument();
 		try {
-			doc.insertString(doc.getLength(), "Them: " + r + "\n", them);
+			if(doc.getText(doc.getLength()-1, 1).equals("\n")){
+				doc.insertString(doc.getLength(), "Them: ", them);
+			}
+			doc.insertString(doc.getLength(), r, them);
 		} catch (BadLocationException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();

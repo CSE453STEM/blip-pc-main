@@ -45,32 +45,14 @@ public class transmitter {
 	
 	/* Listener for reading transmissions */
 	private static class portReader implements SerialPortEventListener {
-		String aggstr = "";
 		
 		public void serialEvent(SerialPortEvent event) {
 	        if(event.isRXCHAR()){
 	        	int bufsize = event.getEventValue();
 	        	try {
 	        		/* Create buffer large enough for received characters */
-	        		char c = 255;
 	        		byte buffer[] = sp.readBytes(bufsize);
-	        		String str = new String(buffer);
-	        		
-	        		/* Append read string into aggstr */
-	        		aggstr += str;
-	        		int index = str.length()-1;
-	        		if (index<0){
-	        			index = 0;
-	        		}
-	        		String finalchar = str.substring(index);
-	        		
-	        		/* If received data is end of package, print all received data */
-	        		if(finalchar.equals("\n")){
-	        			String mstr = aggstr.replaceAll("[\u0000-\u001f]", "");
-	        			myUI.printReceived(mstr.substring(2));
-	        			/* Reset aggregate string */
-	        			aggstr = "";
-	        		}
+	        		myUI.printReceived(new String(buffer));
 	        	} catch (SerialPortException e) {
 	        		System.out.println(e);
 	        	}
@@ -80,10 +62,10 @@ public class transmitter {
 	
 	/* Send data in correctly-formatted package */
 	public void sendData(String message){
+		char c = 255;
+		int baud = 200;
+		int ln = message.length();
 		try{
-			char c = 255;
-			int baud = 200;
-			int ln = message.length();
 			sp.writeByte((byte) c);
 			sp.writeByte((byte) baud);
 			sp.writeByte((byte) ln);
