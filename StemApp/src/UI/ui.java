@@ -3,6 +3,7 @@ package UI;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollBar;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
@@ -40,6 +41,7 @@ public class ui extends JFrame{
 	private SimpleAttributeSet software = new SimpleAttributeSet();
 	private JButton sendTypebox = new JButton("Send");
 	private JScrollPane scroll = new JScrollPane(chatbox);
+	private JScrollBar scrollbar = scroll.getVerticalScrollBar();
 	private static transmitter tm;
 	
 	private JLabel displayLabel = new JLabel();
@@ -98,7 +100,7 @@ public class ui extends JFrame{
 		sendBitBox.setPreferredSize(new Dimension(width/26, height/32));
 	//	panel3.setPreferredSize(new Dimension(width/2,height/30));
 		
-		displayLabel.setText("Check Bits to find Asci Character!");
+		displayLabel.setText("Check the bits to send an ASCII character");
 		
 		sendBitBox.setBackground(myRed); 
 		//bGroup.add(setBit1);
@@ -160,6 +162,7 @@ public class ui extends JFrame{
 		StyledDocument doc = chatbox.getStyledDocument();
 		try{
 			doc.insertString(doc.getLength(), "You: " + o + "\n", you);
+			scrollbar.setValue(scrollbar.getMaximum());
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -236,6 +239,7 @@ public class ui extends JFrame{
 				doc.insertString(doc.getLength(), "Them: ", them);
 			}
 			doc.insertString(doc.getLength(), r, them);
+			scrollbar.setValue(scrollbar.getMaximum());
 		} catch (BadLocationException e1){ 
 			e1.printStackTrace();
 		}	
