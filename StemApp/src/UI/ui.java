@@ -101,12 +101,6 @@ public class ui extends JFrame{
 		displayLabel.setText("Check Bits to find Asci Character!");
 		
 		sendBitBox.setBackground(myRed); 
-		//bGroup.add(setBit1);
-		//bGroup.add(setBit2);
-		//bGroup.add(setBit3);
-		//bGroup.add(setBit4);
-		//bGroup.add(setBit5);
-		//bGroup.add(setBit6);
 		
 		
 		chatbox.setEditable(false);
@@ -152,10 +146,9 @@ public class ui extends JFrame{
 		sendTypebox.setContentAreaFilled(false);
 		sendTypebox.setBackground(myGreen);
 		sendTypebox.setOpaque(true);
-		
-		printReceived("Communications open");
 	}
 	
+	/* Print sent message as "You: ..." */
 	public void outMessage(String o){
 		StyledDocument doc = chatbox.getStyledDocument();
 		try{
@@ -165,6 +158,7 @@ public class ui extends JFrame{
 		}
 	}
 	
+	/* Handles sending messages */
 	private class MultiListener implements ActionListener {
 		private transmitter tm;
 		MultiListener(transmitter passed){
@@ -174,11 +168,12 @@ public class ui extends JFrame{
 		public void actionPerformed(ActionEvent e) {
 			Object src = e.getSource();
 			
+			/* Clear the text entry, show message as sent, and send message */
 			if (src == typebox || src == sendTypebox) {
 				String message = typebox.getText();
 				typebox.setText("");
 				outMessage(message);
-				tm.sendData(message);
+				tm.sendData(message); 
 			}
 		}
 	}
@@ -199,25 +194,16 @@ public class ui extends JFrame{
 		   */
 		  public void actionPerformed(ActionEvent evt) {
 		    StringBuilder sb = new StringBuilder();
-		   // sb.append("Selected Check Boxes: ");
 
 		    // Iterate over each JCheckBox and build message ready for display.
-		    // Could do something more sophisticated here if required.
 		    for (JCheckBox checkBox : checkBoxes) {
-		      
-		    	if (checkBox.isSelected()) {
-		        //sb.append(checkBox.getText().charAt(checkBox.getText().length()-1));
-		    	  sb.append("1");
-		      }
-		      else{
-		    	  sb.append("0");
-		      }
+		    	if (checkBox.isSelected()) { sb.append("1"); } 
+		    	else{ sb.append("0"); }
 		    }
-		    sb.reverse().toString();
 		    String ans = sb.toString();
-		    int asci = Integer.parseInt(ans, 2);
-		    String fin = Character.toString((char) asci);
-		   // JOptionPane.showMessageDialog(null, fin);
+		    String fin = Character.toString((char) Integer.parseInt(ans, 2));
+		    
+		    /*Output character*/
 		    displayLabel.setText(fin);
 		    outMessage(fin);
 		    tm.sendData(fin);
@@ -228,14 +214,14 @@ public class ui extends JFrame{
 	public void printReceived(String r) {
 		StyledDocument doc = chatbox.getStyledDocument();
 		try {
-			if(doc.getLength()==0){
+			if(doc.getLength()==0){ //r is initial, hardcoded message
 				doc.insertString(0, "Software: " + r + "\n", software);
 				return;
 			}
-			if(doc.getText(doc.getLength()-1, 1).equals("\n")){
+			if(doc.getText(doc.getLength()-1, 1).equals("\n")){ //Start of new message
 				doc.insertString(doc.getLength(), "Them: ", them);
 			}
-			doc.insertString(doc.getLength(), r, them);
+			doc.insertString(doc.getLength(), r, them); //print received character
 		} catch (BadLocationException e1){ 
 			e1.printStackTrace();
 		}	

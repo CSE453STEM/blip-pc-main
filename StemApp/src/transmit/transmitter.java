@@ -9,8 +9,9 @@ public class transmitter {
     static SerialPort sp;
 	static UI.ui myUI;
 	
+	/* Constructor */
 	public transmitter(UI.ui passedUI){
-		/* Pass UI in so that tm can call UI display methods */
+		/* Pass UI in so that transmitter can call UI methods */
 		myUI = passedUI;	
 		String[] ports = SerialPortList.getPortNames();
 		
@@ -19,7 +20,8 @@ public class transmitter {
 			/* Try highest-numbered available COM port for communication */
 			sp = new SerialPort(ports[ports.length-1]);
 		} catch(Exception e){
-			System.out.println("Port doesn't exist");
+			System.out.println("Could not open a port");
+			myUI.printReceived("Could not open a port");
 			return;
 		}
 	
@@ -32,8 +34,11 @@ public class transmitter {
 			sp.addEventListener(new portReader());
 		} catch(SerialPortException e){
 			System.out.println(e);
+			myUI.printReceived("Could not initialize port");
+			return;
 		}
 		
+		myUI.printReceived("Port opened successfully. Commmunications open");
 	}
 	
 	/* Close port - wrapper to call from UI class and catch exception */
