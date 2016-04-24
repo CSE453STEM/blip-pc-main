@@ -72,7 +72,7 @@ public class transmitter {
 	public void sendData(String message){
 		char c = 255;
 		int baud = 200;
-		int ln = message.length();
+		int ln = message.length() + 1;
 		try{
 			sp.writeByte((byte) c); //Message-start control character
 			sp.writeByte((byte) baud); //Baud rate

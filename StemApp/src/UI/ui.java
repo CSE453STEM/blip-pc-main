@@ -51,8 +51,8 @@ public class ui extends JFrame{
 	private JCheckBox setBit3 = new JCheckBox("bit3");
 	private JCheckBox setBit4 = new JCheckBox("bit4");
 	private JCheckBox setBit5 = new JCheckBox("bit5");
-	private JCheckBox setBit6= new JCheckBox("bit6");
-	private JCheckBox setBit7= new JCheckBox("bit7");
+	private JCheckBox setBit6 = new JCheckBox("bit6");
+	private JCheckBox setBit7 = new JCheckBox("bit7");
 	private JButton sendBitBox = new JButton("Send");
 	private ButtonGroup bGroup = new ButtonGroup();
 	
@@ -98,12 +98,10 @@ public class ui extends JFrame{
 		typebox.setPreferredSize(new Dimension(width/3 - width/21, height/30));
 		sendTypebox.setPreferredSize(new Dimension(width/24, height/30));
 		sendBitBox.setPreferredSize(new Dimension(width/26, height/32));
-	//	panel3.setPreferredSize(new Dimension(width/2,height/30));
 		
 		displayLabel.setText("Check the bits to send an ASCII character");
 		
 		sendBitBox.setBackground(myRed); 
-		
 		
 		chatbox.setEditable(false);
 		panel.add(scroll);
@@ -129,22 +127,26 @@ public class ui extends JFrame{
 		typebox.setDocument 
 			(new JTextFieldLim(127));
 		
-		
 		/* Pass UI to data transmission handler */
 		tm = new transmitter(this);
 		MultiListener send = new MultiListener(tm);
-		MyActionListener but = new MyActionListener();
-		sendBitBox.addActionListener(but);
-		but.addCheckBox(setBit1);
-		but.addCheckBox(setBit2);
-		but.addCheckBox(setBit3);
-		but.addCheckBox(setBit4);
-		but.addCheckBox(setBit5);
-		but.addCheckBox(setBit6);
-		but.addCheckBox(setBit7);
+		sendBitBox.addActionListener(send);
+		setBit1.addActionListener(send);
+		setBit2.addActionListener(send);
+		setBit3.addActionListener(send);
+		setBit4.addActionListener(send);
+		setBit5.addActionListener(send);
+		setBit6.addActionListener(send);
+		setBit7.addActionListener(send);
+		send.addCheckBox(setBit1);
+		send.addCheckBox(setBit2);
+		send.addCheckBox(setBit3);
+		send.addCheckBox(setBit4);
+		send.addCheckBox(setBit5);
+		send.addCheckBox(setBit6);
+		send.addCheckBox(setBit7);
 		typebox.addActionListener(send);
 		sendTypebox.addActionListener(send);
-		
 		sendTypebox.setContentAreaFilled(false);
 		sendTypebox.setBackground(myGreen);
 		sendTypebox.setOpaque(true);
@@ -164,6 +166,16 @@ public class ui extends JFrame{
 	/* Handles sending messages */
 	private class MultiListener implements ActionListener {
 		private transmitter tm;
+		private final java.util.List<JCheckBox> checkBoxes = new LinkedList<JCheckBox>();
+		private String currchar = "";
+
+		/**
+		 * Adds the specified JCheckBox to the list of JCheckBoxes.
+		 */
+		public void addCheckBox(JCheckBox checkBox) {
+		    this.checkBoxes.add(checkBox);
+		}
+		  
 		MultiListener(transmitter passed){
 			tm = passed;
 		}
@@ -178,40 +190,29 @@ public class ui extends JFrame{
 				outMessage(message);
 				tm.sendData(message); 
 			}
+			
+			if(checkBoxes.contains(src)){
+				StringBuilder sb = new StringBuilder();
+
+			    // Iterate over each JCheckBox and build message ready for display.
+			    for (JCheckBox checkBox : checkBoxes) {
+			    	if (checkBox.isSelected()) { sb.append("1"); } 
+			    	else{ sb.append("0"); }
+			    }
+			    String ans = sb.reverse().toString();
+			    String fin = Character.toString((char) Integer.parseInt(ans, 2));
+			    
+			    /*Output character*/
+			    displayLabel.setText(fin);
+			    currchar = fin;
+			}
+			
+			if(src == sendBitBox){
+				outMessage(currchar);
+				tm.sendData(currchar);
+			}
 		}
 	}
-	
-	
-	public class MyActionListener implements ActionListener {
-		  private final java.util.List<JCheckBox> checkBoxes = new LinkedList<JCheckBox>();
-
-		  /**
-		   * Adds the specified JCheckBox to the list of JCheckBoxes.
-		   */
-		  public void addCheckBox(JCheckBox checkBox) {
-		    this.checkBoxes.add(checkBox);
-		  }
-
-		  /**
-		   * Called when the Submit button is pressed.
-		   */
-		  public void actionPerformed(ActionEvent evt) {
-		    StringBuilder sb = new StringBuilder();
-
-		    // Iterate over each JCheckBox and build message ready for display.
-		    for (JCheckBox checkBox : checkBoxes) {
-		    	if (checkBox.isSelected()) { sb.append("1"); } 
-		    	else{ sb.append("0"); }
-		    }
-		    String ans = sb.toString();
-		    String fin = Character.toString((char) Integer.parseInt(ans, 2));
-		    
-		    /*Output character*/
-		    displayLabel.setText(fin);
-		    outMessage(fin);
-		    tm.sendData(fin);
-		  }
-		}	
 	
 	/* Prints string received over serial communication */
 	public void printReceived(String r) {
