@@ -7,6 +7,7 @@ import javax.swing.JScrollBar;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
+import javax.swing.SwingConstants;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.SimpleAttributeSet;
@@ -46,15 +47,16 @@ public class ui extends JFrame{
 	
 	private JLabel displayLabel = new JLabel();
 	
-	private JCheckBox setBit1 = new JCheckBox("bit1");
-	private JCheckBox setBit2 = new JCheckBox("bit2");
-	private JCheckBox setBit3 = new JCheckBox("bit3");
-	private JCheckBox setBit4 = new JCheckBox("bit4");
-	private JCheckBox setBit5 = new JCheckBox("bit5");
-	private JCheckBox setBit6 = new JCheckBox("bit6");
-	private JCheckBox setBit7 = new JCheckBox("bit7");
+	private JCheckBox setBit0 = new JCheckBox("Bit 0");
+	private JCheckBox setBit1 = new JCheckBox("Bit 1");
+	private JCheckBox setBit2 = new JCheckBox("Bit 2");
+	private JCheckBox setBit3 = new JCheckBox("Bit 3");
+	private JCheckBox setBit4 = new JCheckBox("Bit 4");
+	private JCheckBox setBit5 = new JCheckBox("Bit 5");
+	private JCheckBox setBit6 = new JCheckBox("Bit 6");
 	private JButton sendBitBox = new JButton("Send");
 	private ButtonGroup bGroup = new ButtonGroup();
+	MultiListener send;
 	
 	
 	public static void main(String args[]) {
@@ -99,7 +101,7 @@ public class ui extends JFrame{
 		sendTypebox.setPreferredSize(new Dimension(width/24, height/30));
 		sendBitBox.setPreferredSize(new Dimension(width/26, height/32));
 		
-		displayLabel.setText("Check the bits to send an ASCII character");
+		displayLabel.setText("...");
 		
 		sendBitBox.setBackground(myRed); 
 		
@@ -107,13 +109,22 @@ public class ui extends JFrame{
 		panel.add(scroll);
 		panel2.add(typebox);
 		panel2.add(sendTypebox);
-		panel3.add(setBit7);
-		panel3.add(setBit6);
-		panel3.add(setBit5);
-		panel3.add(setBit4);
-		panel3.add(setBit3);
-		panel3.add(setBit2);
-		panel3.add(setBit1);
+		
+		typebox.setDocument 
+			(new JTextFieldLim(127));
+		
+		/* Pass UI to data transmission handler */
+		tm = new transmitter(this);
+		send = new MultiListener(tm);
+		sendBitBox.addActionListener(send);
+		initCheckBox(panel3, setBit6);
+		initCheckBox(panel3, setBit5);
+		initCheckBox(panel3, setBit4);
+		initCheckBox(panel3, setBit3);
+		initCheckBox(panel3, setBit2);
+		initCheckBox(panel3, setBit1);
+		initCheckBox(panel3, setBit0);
+		
 		panel3.add(sendBitBox,BorderLayout.EAST);
 		panel3.add(Box.createHorizontalStrut(100));//creates space for ASCCI character 
 		panel3.add(displayLabel);
@@ -124,32 +135,21 @@ public class ui extends JFrame{
 		pack();
 		setVisible(true);
 		
-		typebox.setDocument 
-			(new JTextFieldLim(127));
-		
-		/* Pass UI to data transmission handler */
-		tm = new transmitter(this);
-		MultiListener send = new MultiListener(tm);
-		sendBitBox.addActionListener(send);
-		setBit1.addActionListener(send);
-		setBit2.addActionListener(send);
-		setBit3.addActionListener(send);
-		setBit4.addActionListener(send);
-		setBit5.addActionListener(send);
-		setBit6.addActionListener(send);
-		setBit7.addActionListener(send);
-		send.addCheckBox(setBit1);
-		send.addCheckBox(setBit2);
-		send.addCheckBox(setBit3);
-		send.addCheckBox(setBit4);
-		send.addCheckBox(setBit5);
-		send.addCheckBox(setBit6);
-		send.addCheckBox(setBit7);
 		typebox.addActionListener(send);
 		sendTypebox.addActionListener(send);
 		sendTypebox.setContentAreaFilled(false);
 		sendTypebox.setBackground(myGreen);
 		sendTypebox.setOpaque(true);
+	}
+	
+	/* Sets up check box */
+	private void initCheckBox(JPanel panel, JCheckBox check){
+		panel.add(check);
+		check.setVerticalTextPosition(SwingConstants.TOP);
+		check.setHorizontalTextPosition(SwingConstants.CENTER);
+		check.addActionListener(send);
+		send.addCheckBox(check);
+		
 	}
 	
 	/* Print sent message as "You: ..." */
