@@ -37,6 +37,7 @@ public class ui extends JFrame{
 	private JTextField typebox = new JTextField();
 	private SimpleAttributeSet you = new SimpleAttributeSet();
 	private SimpleAttributeSet them = new SimpleAttributeSet();
+	private SimpleAttributeSet software = new SimpleAttributeSet();
 	private JButton sendTypebox = new JButton("Send");
 	private JScrollPane scroll = new JScrollPane(chatbox);
 	private static transmitter tm;
@@ -77,7 +78,7 @@ public class ui extends JFrame{
 		JPanel panel2 = new JPanel();
 		JPanel panel3 = new JPanel();
 		
-		Color myGreen = new Color (141,244,127);
+		Color myGreen = new Color (39,178,11);
 		Color myRed = new Color (160,4,4);
 		Color myBlue = new Color (36,82,181);
 		
@@ -87,6 +88,9 @@ public class ui extends JFrame{
 		StyleConstants.setForeground(them, myRed);
 		StyleConstants.setBackground(them, Color.WHITE);
 		StyleConstants.setBold(them, true);
+		StyleConstants.setForeground(software, myGreen);
+		StyleConstants.setBackground(software, Color.WHITE);
+		StyleConstants.setBold(software, true);
 		
 		scroll.setPreferredSize(new Dimension(width/3, height/2));
 		typebox.setPreferredSize(new Dimension(width/3 - width/21, height/30));
@@ -149,7 +153,16 @@ public class ui extends JFrame{
 		sendTypebox.setBackground(myGreen);
 		sendTypebox.setOpaque(true);
 		
-		printReceived("what's up");
+		printReceived("Communications open");
+	}
+	
+	public void outMessage(String o){
+		StyledDocument doc = chatbox.getStyledDocument();
+		try{
+			doc.insertString(doc.getLength(), "You: " + o + "\n", you);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	private class MultiListener implements ActionListener {
@@ -162,17 +175,10 @@ public class ui extends JFrame{
 			Object src = e.getSource();
 			
 			if (src == typebox || src == sendTypebox) {
-				StyledDocument doc = chatbox.getStyledDocument();
-				try {
-					doc.insertString(doc.getLength(), "You: " + typebox.getText() + "\n", you);
-					
-					String message = typebox.getText();
-					typebox.setText("");
-					tm.sendData(message);
-				} catch (BadLocationException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				String message = typebox.getText();
+				typebox.setText("");
+				outMessage(message);
+				tm.sendData(message);
 			}
 		}
 	}
@@ -213,40 +219,24 @@ public class ui extends JFrame{
 		    String fin = Character.toString((char) asci);
 		   // JOptionPane.showMessageDialog(null, fin);
 		    displayLabel.setText(fin);
+		    outMessage(fin);
+		    tm.sendData(fin);
 		  }
 		}	
 	
-	
-	
-	
-	/*public class ButtonListener implements ActionListener {
-
-		@Override
-		public void actionPerformed(ActionEvent E) {
-			Object src = E.getSource();
-			
-			for(int i = 1; i<bGroup.getButtonCount();i++){
-				if(bGroup(i).)
-			}
-			
-		}
-		
-	}*/
-
-	
+	/* Prints string received over serial communication */
 	public void printReceived(String r) {
 		StyledDocument doc = chatbox.getStyledDocument();
 		try {
 			if(doc.getLength()==0){
-				doc.insertString(0, "Them: " + r + "\n", them);
+				doc.insertString(0, "Software: " + r + "\n", software);
 				return;
 			}
 			if(doc.getText(doc.getLength()-1, 1).equals("\n")){
 				doc.insertString(doc.getLength(), "Them: ", them);
 			}
 			doc.insertString(doc.getLength(), r, them);
-		} catch (BadLocationException e1) {
-			// TODO Auto-generated catch block
+		} catch (BadLocationException e1){ 
 			e1.printStackTrace();
 		}	
 	}
