@@ -2,11 +2,15 @@ package UI;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollBar;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
+import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
@@ -31,6 +35,7 @@ import java.awt.List;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.util.LinkedList;
 
@@ -44,6 +49,10 @@ public class ui extends JFrame{
 	private JScrollPane scroll = new JScrollPane(chatbox);
 	private JScrollBar scrollbar = scroll.getVerticalScrollBar();
 	private static transmitter tm;
+	
+	private JMenuBar menuBar = new JMenuBar();
+	private JMenu mainMenu = new JMenu("Settings");
+	private JMenuItem comItem = new JMenuItem("Com Ports", KeyEvent.VK_C);
 	
 	private JLabel displayLabel = new JLabel();
 	
@@ -110,6 +119,17 @@ public class ui extends JFrame{
 		panel2.add(typebox);
 		panel2.add(sendTypebox);
 		
+		mainMenu.setMnemonic(KeyEvent.VK_S);
+		mainMenu.getAccessibleContext().setAccessibleDescription(
+		        "Adjust COM port settings or re-initialize");
+		menuBar.add(mainMenu);
+		
+		comItem.setAccelerator(KeyStroke.getKeyStroke(
+		        KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		comItem.getAccessibleContext().setAccessibleDescription(
+		        "COM Settings");
+		mainMenu.add(comItem);
+		
 		typebox.setDocument 
 			(new JTextFieldLim(127));
 		
@@ -129,6 +149,7 @@ public class ui extends JFrame{
 		panel3.add(Box.createHorizontalStrut(100));//creates space for ASCCI character 
 		panel3.add(displayLabel);
 		
+		this.setJMenuBar(menuBar);
 		add(panel,BorderLayout.NORTH);
 		add(panel2, BorderLayout.CENTER);
 		add(panel3, BorderLayout.SOUTH);
