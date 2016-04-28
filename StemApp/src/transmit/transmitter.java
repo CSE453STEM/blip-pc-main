@@ -9,7 +9,7 @@ public class transmitter {
     static SerialPort sp;
 	static UI.ui myUI;
 	
-	/* Constructor */
+	/* Constructor one - used on start-up, tries to pick COM Port automatically*/
 	public transmitter(UI.ui passedUI){
 		/* Pass UI in so that transmitter can call UI methods */
 		myUI = passedUI;	
@@ -20,11 +20,30 @@ public class transmitter {
 			/* Try highest-numbered available COM port for communication */
 			sp = new SerialPort(ports[ports.length-1]);
 		} catch(Exception e){
-			System.out.println("Could not open a port");
-			myUI.printReceived("Could not open a port");
+			System.out.println(e);
+			myUI.printReceived("Could not open a port\n", true);
 			return;
 		}
 	
+		commonConstructor(sp);
+	}
+	
+	/* Constructor two - used to reinitialize ports - allows a specified COM Port */
+	public transmitter(UI.ui passedUI, String portName){
+		myUI = passedUI;
+		try{
+			sp = new SerialPort(portName);
+		} catch(Exception e){
+			System.out.println(e);
+			myUI.printReceived("Could not open the specified port\n", true);
+			return;
+		}
+		
+		commonConstructor(sp);
+	}
+	
+	/* Common code for both versions of the constructor */
+	public void commonConstructor(SerialPort sp){
 		try{
 			/* Set up COM Port for communication */
 			sp.openPort();
@@ -34,11 +53,11 @@ public class transmitter {
 			sp.addEventListener(new portReader());
 		} catch(SerialPortException e){
 			System.out.println(e);
-			myUI.printReceived("Could not initialize port");
+			myUI.printReceived("Could not initialize port\n", true);
 			return;
 		}
 		
-		myUI.printReceived("Port opened successfully. Commmunications open");
+		myUI.printReceived("Port opened successfully. Commmunications open\n", true);
 	}
 	
 	/* Close port - wrapper to call from UI class and catch exception */
@@ -83,6 +102,17 @@ public class transmitter {
 			System.out.println(e);
 		}
 		
+	}
+	
+	/* Retrieves available COM Ports for UI */
+	public Object[] getPorts(){
+		Object[] ports = null;
+		try{
+			ports = SerialPortList.getPortNames();
+		}catch(Exception e){
+			System.out.println(e);
+		}
+		return ports;
 	}
 }
 

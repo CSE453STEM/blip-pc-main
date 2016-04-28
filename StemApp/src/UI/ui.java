@@ -136,6 +136,7 @@ public class ui extends JFrame{
 		/* Pass UI to data transmission handler */
 		tm = new transmitter(this);
 		send = new MultiListener(tm);
+		comItem.addActionListener(send);
 		sendBitBox.addActionListener(send);
 		initCheckBox(panel3, setBit6);
 		initCheckBox(panel3, setBit5);
@@ -181,6 +182,21 @@ public class ui extends JFrame{
 			scrollbar.setValue(scrollbar.getMaximum());
 		}catch(Exception e){
 			e.printStackTrace();
+		}
+	}
+	
+	/* Bring up COM settings */
+	public void adjSettings(){
+		Object[] options = tm.getPorts();
+		String port = (String) JOptionPane.showInputDialog(this, 
+									"Available COM Ports:", 
+									"COM Settings", 
+									JOptionPane.PLAIN_MESSAGE, 
+									null, 
+									options,
+									null);
+		if(port != null){
+			tm = new transmitter(this, port);
 		}
 	}
 	
@@ -232,25 +248,42 @@ public class ui extends JFrame{
 				outMessage(currchar);
 				tm.sendData(currchar);
 			}
+			
+			if(src == comItem) {
+				adjSettings();
+			}
+		}
+	}
+	
+	public void printReceived(String r, boolean issoft){
+		StyledDocument doc = chatbox.getStyledDocument();
+		SimpleAttributeSet source = them;
+		String preface = "Them: ";
+		if(issoft){
+			source = software;
+			preface = "Software: ";
+		}
+		
+		try {
+			if(doc.getLength()==0){ //r is initial message
+				doc.insertString(0, preface + r, source);
+				return;
+			}
+			if(doc.getText(doc.getLength()-1, 1).equals("\n")){ //Start of new message
+				doc.insertString(doc.getLength(), preface, source);
+			} else if(issoft){
+				doc.insertString(doc.getLength(), "\n" + preface, source);
+			}
+			doc.insertString(doc.getLength(), r, source);
+			scrollbar.setValue(scrollbar.getMaximum());
+		} catch (BadLocationException e1){ 
+			e1.printStackTrace();
 		}
 	}
 	
 	/* Prints string received over serial communication */
 	public void printReceived(String r) {
-		StyledDocument doc = chatbox.getStyledDocument();
-		try {
-			if(doc.getLength()==0){ //r is initial, hardcoded message
-				doc.insertString(0, "Software: " + r + "\n", software);
-				return;
-			}
-			if(doc.getText(doc.getLength()-1, 1).equals("\n")){ //Start of new message
-				doc.insertString(doc.getLength(), "Them: ", them);
-			}
-			doc.insertString(doc.getLength(), r, them); //print received character
-			scrollbar.setValue(scrollbar.getMaximum());
-		} catch (BadLocationException e1){ 
-			e1.printStackTrace();
-		}	
+		printReceived(r, false);	
 	}
 	
 	private class JTextFieldLim extends PlainDocument {
