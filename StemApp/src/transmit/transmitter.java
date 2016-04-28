@@ -28,7 +28,7 @@ public class transmitter {
 		commonConstructor(sp);
 	}
 	
-	/* Constructor two - used to reinitialize ports - allows a specified COM Port */
+	/* Constructor two - uses a specified COM port */
 	public transmitter(UI.ui passedUI, String portName){
 		myUI = passedUI;
 		try{

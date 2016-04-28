@@ -185,7 +185,7 @@ public class ui extends JFrame{
 		}
 	}
 	
-	/* Bring up COM settings */
+	/* Bring up COM Port Selector*/
 	public void adjSettings(){
 		Object[] options = tm.getPorts();
 		String port = (String) JOptionPane.showInputDialog(this, 
