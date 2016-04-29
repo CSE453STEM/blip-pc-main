@@ -1,37 +1,8 @@
 package UI;
 
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollBar;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
-import javax.swing.JToggleButton;
-import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
-import javax.swing.text.PlainDocument;
-
-import transmit.transmitter;
-
-import javax.swing.Box;
-import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.List;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,23 +10,39 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.util.LinkedList;
 
+import javax.swing.Box;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
+import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.PlainDocument;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
+
+import transmit.transmitter;
+
 public class ui extends JFrame{
+	/* Interactive JFrame Elements */
 	private JTextPane chatbox = new JTextPane();
 	private JTextField typebox = new JTextField();
-	private SimpleAttributeSet you = new SimpleAttributeSet();
-	private SimpleAttributeSet them = new SimpleAttributeSet();
-	private SimpleAttributeSet software = new SimpleAttributeSet();
-	private JButton sendTypebox = new JButton("Send");
+	private JButton sendTypebox = new JButton("Send Text");
 	private JScrollPane scroll = new JScrollPane(chatbox);
 	private JScrollBar scrollbar = scroll.getVerticalScrollBar();
-	private static transmitter tm;
-	
-	private JMenuBar menuBar = new JMenuBar();
-	private JMenu mainMenu = new JMenu("Settings");
-	private JMenuItem comItem = new JMenuItem("Com Ports", KeyEvent.VK_C);
-	
 	private JLabel displayLabel = new JLabel();
-	
 	private JCheckBox setBit0 = new JCheckBox("Bit 0");
 	private JCheckBox setBit1 = new JCheckBox("Bit 1");
 	private JCheckBox setBit2 = new JCheckBox("Bit 2");
@@ -63,10 +50,21 @@ public class ui extends JFrame{
 	private JCheckBox setBit4 = new JCheckBox("Bit 4");
 	private JCheckBox setBit5 = new JCheckBox("Bit 5");
 	private JCheckBox setBit6 = new JCheckBox("Bit 6");
-	private JButton sendBitBox = new JButton("Send");
-	private ButtonGroup bGroup = new ButtonGroup();
-	MultiListener send;
+	private JButton sendBitBox = new JButton("Send Bit");
+
+	/* Menu Elements */
+	private JMenuBar menuBar = new JMenuBar();
+	private JMenu mainMenu = new JMenu("Settings");
+	private JMenuItem comItem = new JMenuItem("Com Ports", KeyEvent.VK_C);
 	
+	/* Attributes for chat entries */
+	private SimpleAttributeSet you = new SimpleAttributeSet();
+	private SimpleAttributeSet them = new SimpleAttributeSet();
+	private SimpleAttributeSet software = new SimpleAttributeSet();
+	
+	/* Transmitter and listener */
+	private static transmitter tm;
+	MultiListener send;
 	
 	public static void main(String args[]) {
 		ui myUI = new ui();
@@ -91,6 +89,7 @@ public class ui extends JFrame{
 		JPanel panel2 = new JPanel();
 		JPanel panel3 = new JPanel();
 		
+		/* Set up Styles for Chat Entries */
 		Color myGreen = new Color (39,178,11);
 		Color myRed = new Color (160,4,4);
 		Color myBlue = new Color (36,82,181);
@@ -106,19 +105,18 @@ public class ui extends JFrame{
 		StyleConstants.setBold(software, true);
 		
 		scroll.setPreferredSize(new Dimension(width/3, height/2));
-		typebox.setPreferredSize(new Dimension(width/3 - width/21, height/30));
-		sendTypebox.setPreferredSize(new Dimension(width/24, height/30));
-		sendBitBox.setPreferredSize(new Dimension(width/26, height/32));
+		typebox.setPreferredSize(new Dimension(width/3 - width/21 - width/28, height/30));
+		sendTypebox.setPreferredSize(new Dimension(width/14, height/30));
+		sendBitBox.setPreferredSize(new Dimension(width/14, height/30));
 		
-		displayLabel.setText("...");
-		
-		sendBitBox.setBackground(myRed); 
+		displayLabel.setText("0");
 		
 		chatbox.setEditable(false);
 		panel.add(scroll);
 		panel2.add(typebox);
 		panel2.add(sendTypebox);
 		
+		/* Set menu properties */
 		mainMenu.setMnemonic(KeyEvent.VK_S);
 		mainMenu.getAccessibleContext().setAccessibleDescription(
 		        "Adjust COM port settings or re-initialize");
@@ -135,9 +133,10 @@ public class ui extends JFrame{
 		
 		/* Pass UI to data transmission handler */
 		tm = new transmitter(this);
+		
+		/* Add action listeners */
 		send = new MultiListener(tm);
 		comItem.addActionListener(send);
-		sendBitBox.addActionListener(send);
 		initCheckBox(panel3, setBit6);
 		initCheckBox(panel3, setBit5);
 		initCheckBox(panel3, setBit4);
@@ -146,10 +145,12 @@ public class ui extends JFrame{
 		initCheckBox(panel3, setBit1);
 		initCheckBox(panel3, setBit0);
 		
-		panel3.add(sendBitBox,BorderLayout.EAST);
-		panel3.add(Box.createHorizontalStrut(100));//creates space for ASCCI character 
+		/* Set up bit display */
 		panel3.add(displayLabel);
+		panel3.add(Box.createHorizontalStrut(70));//creates space for ASCCI character 
+		panel3.add(sendBitBox,BorderLayout.EAST);
 		
+		/* Finish creating window */
 		this.setJMenuBar(menuBar);
 		add(panel,BorderLayout.NORTH);
 		add(panel2, BorderLayout.CENTER);
@@ -157,11 +158,17 @@ public class ui extends JFrame{
 		pack();
 		setVisible(true);
 		
+		/* Set up Button properties */
 		typebox.addActionListener(send);
 		sendTypebox.addActionListener(send);
 		sendTypebox.setContentAreaFilled(false);
 		sendTypebox.setBackground(myGreen);
+		sendTypebox.setForeground(Color.WHITE);
 		sendTypebox.setOpaque(true);
+		
+		sendBitBox.addActionListener(send);
+		sendBitBox.setBackground(myGreen); 
+		sendBitBox.setForeground(Color.WHITE);
 	}
 	
 	/* Sets up check box */
@@ -195,7 +202,9 @@ public class ui extends JFrame{
 									null, 
 									options,
 									null);
+		/* Close old port and create new transmitter with selected port */
 		if(port != null){
+			tm.closePort();
 			tm = new transmitter(this, port);
 		}
 	}
@@ -212,7 +221,8 @@ public class ui extends JFrame{
 		public void addCheckBox(JCheckBox checkBox) {
 		    this.checkBoxes.add(checkBox);
 		}
-		  
+		
+		/* Constructor */
 		MultiListener(transmitter passed){
 			tm = passed;
 		}
@@ -244,36 +254,45 @@ public class ui extends JFrame{
 			    currchar = fin;
 			}
 			
+			/* Send bit when send bit button is pushed */
 			if(src == sendBitBox){
 				outMessage(currchar);
 				tm.sendData(currchar);
 			}
 			
+			/* Bring up COM Settings when menu button is pressed */
 			if(src == comItem) {
 				adjSettings();
 			}
 		}
 	}
 	
+	/* Handles printing received message */
 	public void printReceived(String r, boolean issoft){
 		StyledDocument doc = chatbox.getStyledDocument();
 		SimpleAttributeSet source = them;
 		String preface = "Them: ";
+		
+		/* Format for software messages if necessary */
 		if(issoft){
 			source = software;
 			preface = "Software: ";
 		}
 		
 		try {
-			if(doc.getLength()==0){ //r is initial message
+			if(doc.getLength()==0){
+				/* r is initial message, definitely software and at 0 index */
 				doc.insertString(0, preface + r, source);
 				return;
 			}
-			if(doc.getText(doc.getLength()-1, 1).equals("\n")){ //Start of new message
+			if(doc.getText(doc.getLength()-1, 1).equals("\n")){ 
+				/* This is the start of a new message, print preface */
 				doc.insertString(doc.getLength(), preface, source);
 			} else if(issoft){
+				/* This is a software message, move to a newline and print preface */
 				doc.insertString(doc.getLength(), "\n" + preface, source);
 			}
+			/* Print message and scroll down */
 			doc.insertString(doc.getLength(), r, source);
 			scrollbar.setValue(scrollbar.getMaximum());
 		} catch (BadLocationException e1){ 
@@ -286,6 +305,9 @@ public class ui extends JFrame{
 		printReceived(r, false);	
 	}
 	
+	/* Enforces 127-character limit in the text box 
+	 * Prevents messages from violating hardware limitations
+	 */
 	private class JTextFieldLim extends PlainDocument {
 		private int lim;
 		

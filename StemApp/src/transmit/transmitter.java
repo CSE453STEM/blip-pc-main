@@ -17,15 +17,20 @@ public class transmitter {
 		
 		/* Assume BLIP Array will be at highest-numbered available port */
 		try{
+			if(ports.length == 0){
+				myUI.printReceived("No ports detected\n", true);
+				return;
+			}
 			/* Try highest-numbered available COM port for communication */
 			sp = new SerialPort(ports[ports.length-1]);
 		} catch(Exception e){
 			System.out.println(e);
-			myUI.printReceived("Could not open a port\n", true);
+			myUI.printReceived("Could not open the automatically-detected port: " 
+								+ ports[ports.length-1] + "\n", true);
 			return;
 		}
 	
-		commonConstructor(sp);
+		commonConstructor(sp, ports[ports.length-1]);
 	}
 	
 	/* Constructor two - uses a specified COM port */
@@ -35,15 +40,16 @@ public class transmitter {
 			sp = new SerialPort(portName);
 		} catch(Exception e){
 			System.out.println(e);
-			myUI.printReceived("Could not open the specified port\n", true);
+			myUI.printReceived("Could not open the specified port: " + portName
+								+ "\n", true);
 			return;
 		}
 		
-		commonConstructor(sp);
+		commonConstructor(sp, portName);
 	}
 	
 	/* Common code for both versions of the constructor */
-	public void commonConstructor(SerialPort sp){
+	public void commonConstructor(SerialPort sp, String spname){
 		try{
 			/* Set up COM Port for communication */
 			sp.openPort();
@@ -53,11 +59,13 @@ public class transmitter {
 			sp.addEventListener(new portReader());
 		} catch(SerialPortException e){
 			System.out.println(e);
-			myUI.printReceived("Could not initialize port\n", true);
+			myUI.printReceived("Port " + spname 
+					+ " found, but could not be initialized. May be busy\n", true);
 			return;
 		}
 		
-		myUI.printReceived("Port opened successfully. Commmunications open\n", true);
+		myUI.printReceived("Port " + spname
+					+ " opened successfully. Commmunications open\n", true);
 	}
 	
 	/* Close port - wrapper to call from UI class and catch exception */
