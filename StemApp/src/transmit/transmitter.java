@@ -80,6 +80,8 @@ public class transmitter {
 	/* Listener for reading transmissions */
 	private static class portReader implements SerialPortEventListener {
 		public void serialEvent(SerialPortEvent event) {
+			System.out.println("Characters received");
+			
 			/* When one or more characters are received */
 	        if(event.isRXCHAR()){
 	        	int bufsize = event.getEventValue();
@@ -91,6 +93,9 @@ public class transmitter {
 	        	} catch (SerialPortException e) {
 	        		System.out.println(e);
 	        	}
+	        }
+	        else{
+	        	System.out.println(event);
 	        }
 		}
 	}

@@ -273,7 +273,7 @@ public class ui extends JFrame{
 			    	if (checkBox.isSelected()) { sb.append("1"); } 
 			    	else{ sb.append("0"); }
 			    }
-			    String ans = sb.reverse().toString();
+			    String ans = sb.toString();
 			    String fin = Character.toString((char) Integer.parseInt(ans, 2));
 			    
 			    /*Output character*/
