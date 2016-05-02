@@ -96,9 +96,8 @@ public class transmitter {
 	}
 	
 	/* Send data in correctly-formatted package */
-	public void sendData(String message){
+	public void sendData(String message, int baud){
 		char c = 255;
-		int baud = 200;
 		int ln = message.length() + 1;
 		try{
 			sp.writeByte((byte) c); //Message-start control character

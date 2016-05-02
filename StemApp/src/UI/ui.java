@@ -22,6 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
@@ -43,6 +44,7 @@ public class ui extends JFrame{
 	private JScrollPane scroll = new JScrollPane(chatbox);
 	private JScrollBar scrollbar = scroll.getVerticalScrollBar();
 	private JLabel displayLabel = new JLabel();
+	private JLabel baudLabel = new JLabel();
 	private JCheckBox setBit0 = new JCheckBox("Bit 0");
 	private JCheckBox setBit1 = new JCheckBox("Bit 1");
 	private JCheckBox setBit2 = new JCheckBox("Bit 2");
@@ -51,6 +53,11 @@ public class ui extends JFrame{
 	private JCheckBox setBit5 = new JCheckBox("Bit 5");
 	private JCheckBox setBit6 = new JCheckBox("Bit 6");
 	private JButton sendBitBox = new JButton("Send Bit");
+	int baudmin = 0;
+	int baudmax = 6;
+	int baudinit = 3;
+	private JSlider baudSlide = new JSlider(JSlider.HORIZONTAL, baudmin, 
+											baudmax, baudinit);
 
 	/* Menu Elements */
 	private JMenuBar menuBar = new JMenuBar();
@@ -66,6 +73,7 @@ public class ui extends JFrame{
 	private static transmitter tm;
 	MultiListener send;
 	
+	/* Main method */
 	public static void main(String args[]) {
 		ui myUI = new ui();
 		
@@ -80,6 +88,7 @@ public class ui extends JFrame{
 		});
 	}
 	
+	/* Constructor */
 	ui() {
 		Toolkit tk = Toolkit.getDefaultToolkit();
 		int width = ((int) tk.getScreenSize().getWidth());
@@ -88,6 +97,8 @@ public class ui extends JFrame{
 		JPanel panel = new JPanel();
 		JPanel panel2 = new JPanel();
 		JPanel panel3 = new JPanel();
+		JPanel panel301 = new JPanel();
+		JPanel panel302 = new JPanel();
 		
 		/* Set up Styles for Chat Entries */
 		Color myGreen = new Color (39,178,11);
@@ -110,6 +121,7 @@ public class ui extends JFrame{
 		sendBitBox.setPreferredSize(new Dimension(width/14, height/30));
 		
 		displayLabel.setText("0");
+		baudLabel.setText("Transmission Speed: ");
 		
 		chatbox.setEditable(false);
 		panel.add(scroll);
@@ -134,26 +146,38 @@ public class ui extends JFrame{
 		/* Pass UI to data transmission handler */
 		tm = new transmitter(this);
 		
-		/* Add action listeners */
+		/* Add action listeners and set up bit controls */
 		send = new MultiListener(tm);
-		comItem.addActionListener(send);
-		initCheckBox(panel3, setBit6);
-		initCheckBox(panel3, setBit5);
-		initCheckBox(panel3, setBit4);
-		initCheckBox(panel3, setBit3);
-		initCheckBox(panel3, setBit2);
-		initCheckBox(panel3, setBit1);
-		initCheckBox(panel3, setBit0);
+		panel3.setLayout(new BorderLayout());
+		//panel301.setLayout(new BorderLayout());
+		//panel302.setLayout(new BorderLayout());
+		initCheckBox(panel301, setBit6);
+		initCheckBox(panel301, setBit5);
+		initCheckBox(panel301, setBit4);
+		initCheckBox(panel301, setBit3);
+		initCheckBox(panel301, setBit2);
+		initCheckBox(panel301, setBit1);
+		initCheckBox(panel301, setBit0);
+		panel301.add(displayLabel);
+		panel301.add(Box.createHorizontalStrut(70));//creates space for ASCCI character 
+		panel301.add(sendBitBox);
 		
-		/* Set up bit display */
-		panel3.add(displayLabel);
-		panel3.add(Box.createHorizontalStrut(70));//creates space for ASCCI character 
-		panel3.add(sendBitBox,BorderLayout.EAST);
+		panel302.add(baudLabel);
+		panel302.add(Box.createHorizontalStrut(100));
+		panel302.add(baudSlide);
+		
+		baudSlide.setMajorTickSpacing(1);
+		baudSlide.setMinorTickSpacing(10);
+		baudSlide.setPaintTicks(true);
+		baudSlide.setPaintLabels(true);
 		
 		/* Finish creating window */
+		comItem.addActionListener(send);
 		this.setJMenuBar(menuBar);
-		add(panel,BorderLayout.NORTH);
+		add(panel, BorderLayout.NORTH);
 		add(panel2, BorderLayout.CENTER);
+		panel3.add(panel301, BorderLayout.NORTH);
+		panel3.add(panel302, BorderLayout.SOUTH);
 		add(panel3, BorderLayout.SOUTH);
 		pack();
 		setVisible(true);
@@ -209,7 +233,7 @@ public class ui extends JFrame{
 		}
 	}
 	
-	/* Handles sending messages */
+	/* Handles all GUI controls */
 	private class MultiListener implements ActionListener {
 		private transmitter tm;
 		private final java.util.List<JCheckBox> checkBoxes = new LinkedList<JCheckBox>();
@@ -235,9 +259,10 @@ public class ui extends JFrame{
 				String message = typebox.getText();
 				typebox.setText("");
 				outMessage(message);
-				tm.sendData(message); 
+				tm.sendData(message, baudSlide.getValue()); 
 			}
 			
+			/* Update label when a checkbox is checked or unchecked */
 			if(checkBoxes.contains(src)){
 				StringBuilder sb = new StringBuilder();
 
@@ -257,7 +282,7 @@ public class ui extends JFrame{
 			/* Send bit when send bit button is pushed */
 			if(src == sendBitBox){
 				outMessage(currchar);
-				tm.sendData(currchar);
+				tm.sendData(currchar, baudSlide.getValue());
 			}
 			
 			/* Bring up COM Settings when menu button is pressed */
@@ -267,7 +292,7 @@ public class ui extends JFrame{
 		}
 	}
 	
-	/* Handles printing received message */
+	/* Prints string received over serial communication */
 	public void printReceived(String r, boolean issoft){
 		StyledDocument doc = chatbox.getStyledDocument();
 		SimpleAttributeSet source = them;
@@ -300,7 +325,8 @@ public class ui extends JFrame{
 		}
 	}
 	
-	/* Prints string received over serial communication */
+	/* Prints string received over serial communication
+	 * Handles situation where "issoft" boolean is not provided */
 	public void printReceived(String r) {
 		printReceived(r, false);	
 	}
