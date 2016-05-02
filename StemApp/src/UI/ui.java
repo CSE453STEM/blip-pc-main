@@ -120,7 +120,7 @@ public class ui extends JFrame{
 		sendTypebox.setPreferredSize(new Dimension(width/14, height/30));
 		sendBitBox.setPreferredSize(new Dimension(width/14, height/30));
 		
-		displayLabel.setText("0");
+		displayLabel.setText("...");
 		displayLabel.setPreferredSize(new Dimension(width/30, height/30));
 		baudLabel.setText("Transmission Speed: ");
 		
