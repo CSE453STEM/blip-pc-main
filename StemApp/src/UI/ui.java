@@ -121,6 +121,7 @@ public class ui extends JFrame{
 		sendBitBox.setPreferredSize(new Dimension(width/14, height/30));
 		
 		displayLabel.setText("0");
+		displayLabel.setPreferredSize(new Dimension(width/30, height/30));
 		baudLabel.setText("Transmission Speed: ");
 		
 		chatbox.setEditable(false);
@@ -141,16 +142,14 @@ public class ui extends JFrame{
 		mainMenu.add(comItem);
 		
 		typebox.setDocument 
-			(new JTextFieldLim(127));
+			(new JTextFieldLim(123));
 		
 		/* Pass UI to data transmission handler */
 		tm = new transmitter(this);
 		
-		/* Add action listeners and set up bit controls */
+		/* Add action listeners and set up bit check boxes */
 		send = new MultiListener(tm);
 		panel3.setLayout(new BorderLayout());
-		//panel301.setLayout(new BorderLayout());
-		//panel302.setLayout(new BorderLayout());
 		initCheckBox(panel301, setBit6);
 		initCheckBox(panel301, setBit5);
 		initCheckBox(panel301, setBit4);
@@ -158,10 +157,13 @@ public class ui extends JFrame{
 		initCheckBox(panel301, setBit2);
 		initCheckBox(panel301, setBit1);
 		initCheckBox(panel301, setBit0);
+		
+		/* Add rest of send bit controls */
 		panel301.add(displayLabel);
-		panel301.add(Box.createHorizontalStrut(70));//creates space for ASCCI character 
+		panel301.add(Box.createHorizontalStrut(25)); 
 		panel301.add(sendBitBox);
 		
+		/* Add and set up transmission speed controls */
 		panel302.add(baudLabel);
 		panel302.add(Box.createHorizontalStrut(100));
 		panel302.add(baudSlide);
