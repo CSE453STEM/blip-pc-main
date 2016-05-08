@@ -52,7 +52,7 @@ public class ui extends JFrame{
 	private JCheckBox setBit4 = new JCheckBox("Bit 4");
 	private JCheckBox setBit5 = new JCheckBox("Bit 5");
 	private JCheckBox setBit6 = new JCheckBox("Bit 6");
-	private JButton sendBitBox = new JButton("Send Bit");
+	private JButton sendBitBox = new JButton("Send Byte");
 	int baudmin = 0;
 	int baudmax = 6;
 	int baudinit = 3;
