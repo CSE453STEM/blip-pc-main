@@ -88,6 +88,7 @@ public class ui extends JFrame{
 		});
 	}
 	
+	/*Used http://docs.oracle.com/javase/tutorial/uiswing/components/editorpane.html to do style documents and change text color*/
 	/* Constructor */
 	ui() {
 		Toolkit tk = Toolkit.getDefaultToolkit();
